@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temperature Converter 🌡️</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background: transparent;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .stars::before,
+      .stars::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(white 1px, transparent 1px);
+        background-size: 60px 60px;
+        animation: twinkle 80s linear infinite;
+        opacity: 0.1;
+      }
+
+      .stars::after {
+        background-size: 80px 80px;
+        animation-duration: 130s;
+        opacity: 0.2;
+      }
+
+      @keyframes twinkle {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(-25%, -25%) scale(1.1);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      .container {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        color: #ffe17d;
+      }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        color: #ffe17d;
+        font-weight: 600;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        font-size: 1rem;
+        backdrop-filter: blur(8px);
+        transition: border 0.3s ease;
+        appearance: none;
+      }
+
+      select {
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 20 20' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #ffe17d;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #ffe17d;
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #ffcc00;
+      }
+
+      .result {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars"></div>
+
+    <div class="container">
+      <h1>🌡️ Temperature Converter</h1>
+      <label for="tempInput">Enter Temperature</label>
+      <input type="number" id="tempInput" placeholder="e.g. 25" />
+
+      <label for="fromUnit">🔥 Convert from:</label>
+      <select id="fromUnit">
+        <option value="C">Celsius (°C)</option>
+        <option value="F">Fahrenheit (°F)</option>
+        <option value="K">Kelvin (K)</option>
+      </select>
+
+      <label for="toUnit">❄️ Convert to:</label>
+      <select id="toUnit">
+        <option value="C">Celsius (°C)</option>
+        <option value="F">Fahrenheit (°F)</option>
+        <option value="K">Kelvin (K)</option>
+      </select>
+
+      <button onclick="convertTemp()">Convert</button>
+
+      <div class="result" id="result">✨ Your result will appear here</div>
+    </div>
+
+    <script>
+      function convertTemp() {
+        const temp = parseFloat(document.getElementById("tempInput").value);
+        const from = document.getElementById("fromUnit").value;
+        const to = document.getElementById("toUnit").value;
+        const result = document.getElementById("result");
+
+        if (isNaN(temp)) {
+          result.textContent = "⚠️ Please enter a valid number!";
+          return;
+        }
+
+        let converted;
+
+        // Celsius to others
+        if (from === "C") {
+          if (to === "F") converted = temp * 1.8 + 32;
+          else if (to === "K") converted = temp + 273.15;
+          else converted = temp;
+        }
+
+        // Fahrenheit to others
+        else if (from === "F") {
+          if (to === "C") converted = (temp - 32) / 1.8;
+          else if (to === "K") converted = (temp - 32) / 1.8 + 273.15;
+          else converted = temp;
+        }
+
+        // Kelvin to others
+        else if (from === "K") {
+          if (to === "C") converted = temp - 273.15;
+          else if (to === "F") converted = (temp - 273.15) * 1.8 + 32;
+          else converted = temp;
+        }
+
+        result.innerHTML = `🎯 <strong>${converted.toFixed(
+          2
+        )}</strong> ${unitSymbol(to)}`;
+      }
+
+      function unitSymbol(unit) {
+        if (unit === "C") return "°C";
+        if (unit === "F") return "°F";
+        if (unit === "K") return "K";
+      }
+    </script>
+  </body>
+</html>
